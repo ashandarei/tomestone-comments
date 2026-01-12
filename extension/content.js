@@ -9,7 +9,7 @@
     NICKNAME: 'tomestone_comments_nickname',
     API_URL: 'tomestone_comments_api_url'
   };
-  const DEFAULT_API_URL = 'http://localhost:3000';
+  const DEFAULT_API_URL = 'https://tomestone-comments-production.up.railway.app';
 
   // State
   let currentCharacterId = null;

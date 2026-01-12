@@ -5,7 +5,7 @@ const STORAGE_KEYS = {
   API_URL: 'tomestone_comments_api_url'
 };
 
-const DEFAULT_API_URL = 'http://localhost:3000';
+const DEFAULT_API_URL = 'https://tomestone-comments-production.up.railway.app';
 
 // DOM elements
 const nicknameInput = document.getElementById('nickname');
