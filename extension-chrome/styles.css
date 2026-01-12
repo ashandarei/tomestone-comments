@@ -1,0 +1,423 @@
+/* Tomestone Comments - Styles */
+/* Matches the dark aesthetic of tomestone.gg */
+
+/* CSS Variables matching tomestone.gg */
+:root {
+  --tc-bg-primary: #0a0a0a;
+  --tc-bg-secondary: #111111;
+  --tc-bg-tertiary: #1a1a1a;
+  --tc-bg-hover: #252525;
+  --tc-border: #2d2d2d;
+  --tc-border-light: #404040;
+  --tc-text-primary: #ffffff;
+  --tc-text-secondary: #a0a0a0;
+  --tc-text-muted: #666666;
+  --tc-accent: #3b82f6;
+  --tc-accent-hover: #2563eb;
+  --tc-success: #22c55e;
+  --tc-error: #ef4444;
+  --tc-warning: #f59e0b;
+}
+
+/* Main comments section */
+.tomestone-comments-section {
+  background: var(--tc-bg-secondary);
+  border: 1px solid var(--tc-border);
+  border-radius: 8px;
+  margin-top: 16px;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Header */
+.tomestone-comments-header {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--tc-border);
+}
+
+.tomestone-comments-header h3 {
+  color: var(--tc-text-primary);
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+}
+
+.tomestone-comments-subtitle {
+  color: var(--tc-text-muted);
+  font-size: 13px;
+  margin: 0;
+}
+
+/* Comment form */
+.tomestone-comments-form {
+  background: var(--tc-bg-tertiary);
+  border: 1px solid var(--tc-border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.tomestone-nickname-input {
+  margin-bottom: 12px;
+}
+
+.tomestone-nickname-input input {
+  width: 100%;
+  max-width: 250px;
+  background: var(--tc-bg-primary);
+  border: 1px solid var(--tc-border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: var(--tc-text-primary);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.tomestone-nickname-input input:focus {
+  outline: none;
+  border-color: var(--tc-accent);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.tomestone-nickname-input input::placeholder {
+  color: var(--tc-text-muted);
+}
+
+.tomestone-nickname-hint {
+  display: block;
+  font-size: 11px;
+  color: var(--tc-text-muted);
+  margin-top: 4px;
+}
+
+.tomestone-comment-input textarea {
+  width: 100%;
+  background: var(--tc-bg-primary);
+  border: 1px solid var(--tc-border);
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 14px;
+  color: var(--tc-text-primary);
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+  line-height: 1.5;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.tomestone-comment-input textarea:focus {
+  outline: none;
+  border-color: var(--tc-accent);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.tomestone-comment-input textarea::placeholder {
+  color: var(--tc-text-muted);
+}
+
+.tomestone-comment-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+#tomestone-char-count {
+  font-size: 12px;
+  color: var(--tc-text-muted);
+}
+
+#tomestone-char-count.tomestone-char-warning {
+  color: var(--tc-warning);
+}
+
+/* Buttons */
+.tomestone-btn {
+  background: var(--tc-bg-tertiary);
+  border: 1px solid var(--tc-border);
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--tc-text-primary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tomestone-btn:hover {
+  background: var(--tc-bg-hover);
+  border-color: var(--tc-border-light);
+}
+
+.tomestone-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tomestone-btn-primary {
+  background: var(--tc-accent);
+  border-color: var(--tc-accent);
+  color: white;
+}
+
+.tomestone-btn-primary:hover {
+  background: var(--tc-accent-hover);
+  border-color: var(--tc-accent-hover);
+}
+
+.tomestone-btn-small {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.tomestone-btn-link {
+  background: none;
+  border: none;
+  color: var(--tc-text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.tomestone-btn-link:hover {
+  color: var(--tc-text-primary);
+  background: var(--tc-bg-hover);
+}
+
+/* Comments list */
+.tomestone-comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tomestone-loading,
+.tomestone-no-comments,
+.tomestone-error {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--tc-text-secondary);
+}
+
+.tomestone-error {
+  color: var(--tc-error);
+}
+
+.tomestone-error button {
+  margin-top: 12px;
+}
+
+/* Individual comment */
+.tomestone-comment {
+  background: var(--tc-bg-tertiary);
+  border: 1px solid var(--tc-border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  transition: border-color 0.2s;
+}
+
+.tomestone-comment:hover {
+  border-color: var(--tc-border-light);
+}
+
+.tomestone-reply {
+  background: var(--tc-bg-secondary);
+  border-left: 3px solid var(--tc-accent);
+  border-radius: 0 8px 8px 0;
+}
+
+.tomestone-comment-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.tomestone-comment-author {
+  font-weight: 600;
+  color: var(--tc-accent);
+  font-size: 14px;
+}
+
+.tomestone-comment-date {
+  font-size: 12px;
+  color: var(--tc-text-muted);
+}
+
+.tomestone-comment-content {
+  color: var(--tc-text-primary);
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.tomestone-comment-footer {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.tomestone-delete-btn:hover {
+  color: var(--tc-error) !important;
+}
+
+/* Reply form */
+.tomestone-reply-form {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--tc-border);
+}
+
+.tomestone-reply-form textarea {
+  width: 100%;
+  background: var(--tc-bg-primary);
+  border: 1px solid var(--tc-border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--tc-text-primary);
+  resize: vertical;
+  min-height: 60px;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+.tomestone-reply-form textarea:focus {
+  outline: none;
+  border-color: var(--tc-accent);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.tomestone-reply-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+/* Replies container */
+.tomestone-replies {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Toast notifications */
+.tomestone-toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 999999;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.tomestone-toast-show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.tomestone-toast-success {
+  background: var(--tc-success);
+  color: white;
+}
+
+.tomestone-toast-error {
+  background: var(--tc-error);
+  color: white;
+}
+
+.tomestone-toast-info {
+  background: var(--tc-accent);
+  color: white;
+}
+
+/* Tab styling */
+.tomestone-comments-tab-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .tomestone-comments-section {
+    padding: 14px;
+    margin-top: 12px;
+  }
+
+  .tomestone-comments-form {
+    padding: 12px;
+  }
+
+  .tomestone-nickname-input input {
+    max-width: 100%;
+  }
+
+  .tomestone-comment {
+    padding: 12px;
+  }
+
+  .tomestone-comment-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .tomestone-comment-actions .tomestone-btn {
+    width: 100%;
+  }
+
+  .tomestone-toast {
+    left: 20px;
+    right: 20px;
+    text-align: center;
+  }
+}
+
+/* Scrollbar styling for comments */
+.tomestone-comments-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.tomestone-comments-list::-webkit-scrollbar-track {
+  background: var(--tc-bg-primary);
+  border-radius: 4px;
+}
+
+.tomestone-comments-list::-webkit-scrollbar-thumb {
+  background: var(--tc-border-light);
+  border-radius: 4px;
+}
+
+.tomestone-comments-list::-webkit-scrollbar-thumb:hover {
+  background: var(--tc-text-muted);
+}
+
+/* Animation for new comments */
+@keyframes tomestone-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tomestone-comment {
+  animation: tomestone-fade-in 0.3s ease;
+}

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tomestone Comments</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <header class="popup-header">
+      <h1>💬 Tomestone Comments</h1>
+      <p class="subtitle">Community comments for tomestone.gg</p>
+    </header>
+
+    <main class="popup-content">
+      <div class="form-group">
+        <label for="nickname">Your Nickname</label>
+        <input type="text" id="nickname" placeholder="Enter your nickname" maxlength="50">
+        <span class="hint">Used when posting comments</span>
+      </div>
+
+      <div class="form-group">
+        <label for="api-url">API Server URL</label>
+        <input type="text" id="api-url" placeholder="http://localhost:3000">
+        <span class="hint">Your self-hosted comments server</span>
+      </div>
+
+      <button id="save-btn" class="btn btn-primary">Save Settings</button>
+
+      <div id="status" class="status"></div>
+    </main>
+
+    <footer class="popup-footer">
+      <a href="https://tomestone.gg" target="_blank" class="link">Visit tomestone.gg</a>
+      <span class="version">v1.0.0</span>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
