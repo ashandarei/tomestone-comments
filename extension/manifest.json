@@ -1,0 +1,41 @@
+{
+  "manifest_version": 2,
+  "name": "Tomestone Comments",
+  "version": "1.0.0",
+  "description": "Add a community comments section to tomestone.gg character profiles",
+  "author": "Tomestone Comments",
+  
+  "permissions": [
+    "storage",
+    "activeTab",
+    "<all_urls>"
+  ],
+  
+  "content_scripts": [
+    {
+      "matches": ["*://tomestone.gg/character/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  
+  "browser_action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "48": "icons/icon-48.svg",
+      "96": "icons/icon-96.svg"
+    }
+  },
+  
+  "icons": {
+    "48": "icons/icon-48.svg",
+    "96": "icons/icon-96.svg"
+  },
+  
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "comments@tomestone.gg"
+    }
+  }
+}
