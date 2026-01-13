@@ -119,20 +119,31 @@
   function updateUsernameDisplay() {
     const usernameDisplay = document.getElementById('tomestone-username-display');
     const loginPrompt = document.getElementById('tomestone-login-prompt');
+    const commentInput = document.getElementById('tomestone-new-comment');
+    const submitBtn = document.getElementById('tomestone-submit-comment');
     
     if (usernameDisplay && loginPrompt) {
       if (currentUsername) {
         usernameDisplay.textContent = currentUsername;
         usernameDisplay.parentElement.style.display = 'flex';
         loginPrompt.style.display = 'none';
+        // Enable the comment input and submit button
+        if (commentInput) commentInput.disabled = false;
+        if (submitBtn) submitBtn.disabled = false;
       } else if (isUserLoggedIn()) {
         usernameDisplay.parentElement.style.display = 'none';
         loginPrompt.innerHTML = '👆 Click your profile avatar above to enable commenting';
         loginPrompt.style.display = 'block';
+        // Disable the comment input and submit button
+        if (commentInput) commentInput.disabled = true;
+        if (submitBtn) submitBtn.disabled = true;
       } else {
         usernameDisplay.parentElement.style.display = 'none';
         loginPrompt.innerHTML = '🔒 <a href="https://tomestone.gg/login" style="color: #3b82f6; text-decoration: underline;">Sign in to Tomestone.gg</a> to comment';
         loginPrompt.style.display = 'block';
+        // Disable the comment input and submit button
+        if (commentInput) commentInput.disabled = true;
+        if (submitBtn) submitBtn.disabled = true;
       }
     }
   }
