@@ -600,28 +600,114 @@
     }
   }
 
-  // Initialize the extension
-  async function init() {
-    currentCharacterId = getCharacterIdFromUrl();
-    if (!currentCharacterId) {
-      console.log('Tomestone Comments: Not a character page');
+  // Clean up previous state when navigating to a new character
+  function cleanup() {
+    // Remove the comments tab if it exists
+    const existingTab = document.getElementById('tomestone-comments-tab');
+    if (existingTab) {
+      existingTab.remove();
+    }
+    
+    // Remove the comments container if it exists
+    const existingContainer = document.getElementById('tomestone-comments-container');
+    if (existingContainer) {
+      existingContainer.remove();
+    }
+    
+    // Reset state
+    commentsVisible = false;
+    commentsContainer = null;
+    commentsTab = null;
+    originalContentContainer = null;
+    lastActiveTab = null;
+  }
+
+  // Handle URL changes for SPA navigation
+  function handleUrlChange() {
+    const newCharacterId = getCharacterIdFromUrl();
+    
+    // If we're no longer on a character page, cleanup and exit
+    if (!newCharacterId) {
+      cleanup();
+      currentCharacterId = null;
       return;
     }
+    
+    // If we're on a new character page (or first time on a character page)
+    if (newCharacterId !== currentCharacterId) {
+      cleanup();
+      currentCharacterId = newCharacterId;
+      
+      // Wait for the nav to be ready (SPA may still be rendering)
+      const waitForNav = setInterval(() => {
+        const nav = document.querySelector('nav[aria-label="Tabs"]');
+        if (nav) {
+          clearInterval(waitForNav);
+          commentsTab = createCommentsTab();
+          updateCommentCount();
+        }
+      }, 100);
+      
+      // Timeout after 10 seconds
+      setTimeout(() => clearInterval(waitForNav), 10000);
+    }
+  }
 
-    await loadSettings();
-
-    // Wait for the nav to be ready
-    const waitForNav = setInterval(() => {
-      const nav = document.querySelector('nav[aria-label="Tabs"]');
-      if (nav) {
-        clearInterval(waitForNav);
-        commentsTab = createCommentsTab();
-        updateCommentCount();
+  // Set up URL change detection for SPA navigation
+  function setupUrlChangeDetection() {
+    let lastUrl = window.location.href;
+    
+    // Override pushState and replaceState to detect programmatic navigation
+    const originalPushState = history.pushState;
+    const originalReplaceState = history.replaceState;
+    
+    history.pushState = function(...args) {
+      originalPushState.apply(this, args);
+      if (window.location.href !== lastUrl) {
+        lastUrl = window.location.href;
+        handleUrlChange();
       }
-    }, 100);
+    };
+    
+    history.replaceState = function(...args) {
+      originalReplaceState.apply(this, args);
+      if (window.location.href !== lastUrl) {
+        lastUrl = window.location.href;
+        handleUrlChange();
+      }
+    };
+    
+    // Listen for popstate (back/forward navigation)
+    window.addEventListener('popstate', () => {
+      if (window.location.href !== lastUrl) {
+        lastUrl = window.location.href;
+        handleUrlChange();
+      }
+    });
+    
+    // Also use MutationObserver as a fallback for frameworks that may not trigger history events
+    const observer = new MutationObserver(() => {
+      if (window.location.href !== lastUrl) {
+        lastUrl = window.location.href;
+        handleUrlChange();
+      }
+    });
+    
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+  }
 
-    // Timeout after 10 seconds
-    setTimeout(() => clearInterval(waitForNav), 10000);
+  // Initialize the extension
+  async function init() {
+    await loadSettings();
+    
+    // Set up URL change detection for SPA navigation
+    setupUrlChangeDetection();
+    
+    // Handle the current page
+    handleUrlChange();
   }
 
   // Run when DOM is ready

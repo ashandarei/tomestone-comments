@@ -13,7 +13,7 @@
   
   "content_scripts": [
     {
-      "matches": ["*://tomestone.gg/character/*"],
+      "matches": ["*://tomestone.gg/*"],
       "js": ["content.js"],
       "css": ["styles.css"],
       "run_at": "document_idle"
@@ -35,7 +35,10 @@
   
   "browser_specific_settings": {
     "gecko": {
-      "id": "comments@tomestone.gg"
+      "id": "comments@tomestone.gg",
+      "data_collection_permissions": {
+        "required": false
+      }
     }
   }
 }
