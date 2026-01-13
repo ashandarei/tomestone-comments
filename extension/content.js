@@ -6,20 +6,21 @@
 
   // Configuration
   const STORAGE_KEYS = {
-    NICKNAME: 'tomestone_comments_nickname',
+    USERNAME: 'tomestone_comments_username',
     API_URL: 'tomestone_comments_api_url'
   };
   const DEFAULT_API_URL = 'https://tomestone-comments-production.up.railway.app';
 
   // State
   let currentCharacterId = null;
-  let currentNickname = null;
+  let currentUsername = null;
   let apiBaseUrl = DEFAULT_API_URL;
   let commentsVisible = false;
   let commentsContainer = null;
   let commentsTab = null;
   let originalContentContainer = null;
   let lastActiveTab = null;
+  let usernameObserver = null;
 
   // Extract character ID from URL
   function getCharacterIdFromUrl() {
@@ -31,25 +32,108 @@
   async function loadSettings() {
     try {
       const result = await browser.storage.local.get([
-        STORAGE_KEYS.NICKNAME,
+        STORAGE_KEYS.USERNAME,
         STORAGE_KEYS.API_URL
       ]);
-      currentNickname = result[STORAGE_KEYS.NICKNAME] || null;
+      currentUsername = result[STORAGE_KEYS.USERNAME] || null;
       apiBaseUrl = result[STORAGE_KEYS.API_URL] || DEFAULT_API_URL;
     } catch (e) {
       console.error('Failed to load settings:', e);
-      currentNickname = null;
+      currentUsername = null;
       apiBaseUrl = DEFAULT_API_URL;
     }
   }
 
-  // Save nickname to storage
-  async function saveNickname(nickname) {
+  // Save username to storage
+  async function saveUsername(username) {
     try {
-      await browser.storage.local.set({ [STORAGE_KEYS.NICKNAME]: nickname });
-      currentNickname = nickname;
+      await browser.storage.local.set({ [STORAGE_KEYS.USERNAME]: username });
+      currentUsername = username;
+      // Update the UI if comments are visible
+      updateUsernameDisplay();
     } catch (e) {
-      console.error('Failed to save nickname:', e);
+      console.error('Failed to save username:', e);
+    }
+  }
+
+  // Check if user is logged in (avatar button exists)
+  function isUserLoggedIn() {
+    // Look for the user menu button with avatar
+    const avatarButton = document.querySelector('button[aria-haspopup="menu"] img[alt="avatar"]');
+    return !!avatarButton;
+  }
+
+  // Extract username from the HeadlessUI dropdown menu
+  function extractUsernameFromMenu() {
+    // Look for menu items that link to a character profile
+    const menuItems = document.querySelectorAll('a[role="menuitem"][href^="/character/"]');
+    
+    for (const menuItem of menuItems) {
+      // Find the username in the .font-medium div
+      const usernameEl = menuItem.querySelector('.font-medium');
+      if (usernameEl) {
+        const username = usernameEl.textContent.trim();
+        if (username) {
+          console.log('Tomestone Comments: Found username:', username);
+          return username;
+        }
+      }
+    }
+    return null;
+  }
+
+  // Set up observer to watch for the dropdown menu opening
+  function setupUsernameObserver() {
+    if (usernameObserver) return; // Already set up
+
+    usernameObserver = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        for (const node of mutation.addedNodes) {
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            // Check if this is a HeadlessUI menu (role="menu")
+            const menu = node.querySelector ? 
+              (node.getAttribute('role') === 'menu' ? node : node.querySelector('[role="menu"]')) : 
+              null;
+            
+            if (menu) {
+              // Small delay to ensure menu content is rendered
+              setTimeout(() => {
+                const username = extractUsernameFromMenu();
+                if (username && username !== currentUsername) {
+                  saveUsername(username);
+                }
+              }, 50);
+            }
+          }
+        }
+      }
+    });
+
+    usernameObserver.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+  }
+
+  // Update the username display in the comments form
+  function updateUsernameDisplay() {
+    const usernameDisplay = document.getElementById('tomestone-username-display');
+    const loginPrompt = document.getElementById('tomestone-login-prompt');
+    
+    if (usernameDisplay && loginPrompt) {
+      if (currentUsername) {
+        usernameDisplay.textContent = currentUsername;
+        usernameDisplay.parentElement.style.display = 'flex';
+        loginPrompt.style.display = 'none';
+      } else if (isUserLoggedIn()) {
+        usernameDisplay.parentElement.style.display = 'none';
+        loginPrompt.innerHTML = '👆 Click your profile avatar above to enable commenting';
+        loginPrompt.style.display = 'block';
+      } else {
+        usernameDisplay.parentElement.style.display = 'none';
+        loginPrompt.innerHTML = '🔒 <a href="https://tomestone.gg/login" style="color: #3b82f6; text-decoration: underline;">Sign in to Tomestone.gg</a> to comment';
+        loginPrompt.style.display = 'block';
+      }
     }
   }
 
@@ -242,15 +326,20 @@
       </div>
       
       <div class="tomestone-comments-form">
-        <div class="tomestone-nickname-input">
-          <input type="text" id="tomestone-nickname" placeholder="Your nickname" maxlength="50" value="${currentNickname || ''}">
-          <span class="tomestone-nickname-hint">This nickname will be remembered</span>
+        <div class="tomestone-user-info">
+          <div class="tomestone-username-row" style="display: ${currentUsername ? 'flex' : 'none'};">
+            <span class="tomestone-posting-as">Posting as:</span>
+            <span id="tomestone-username-display" class="tomestone-username">${currentUsername || ''}</span>
+          </div>
+          <div id="tomestone-login-prompt" class="tomestone-login-prompt" style="display: ${currentUsername ? 'none' : 'block'};">
+            ${isUserLoggedIn() ? '👆 Click your profile avatar above to enable commenting' : '🔒 <a href="https://tomestone.gg/login" style="color: #3b82f6; text-decoration: underline;">Sign in to Tomestone.gg</a> to comment'}
+          </div>
         </div>
         <div class="tomestone-comment-input">
-          <textarea id="tomestone-new-comment" placeholder="Write a comment..." maxlength="2000" rows="3"></textarea>
+          <textarea id="tomestone-new-comment" placeholder="Write a comment..." maxlength="2000" rows="3" ${!currentUsername ? 'disabled' : ''}></textarea>
           <div class="tomestone-comment-actions">
             <span id="tomestone-char-count">0/2000</span>
-            <button id="tomestone-submit-comment" class="tomestone-btn tomestone-btn-primary">Post Comment</button>
+            <button id="tomestone-submit-comment" class="tomestone-btn tomestone-btn-primary" ${!currentUsername ? 'disabled' : ''}>Post Comment</button>
           </div>
         </div>
       </div>
@@ -276,17 +365,9 @@
 
   // Set up form event listeners
   function setupFormListeners() {
-    const nicknameInput = document.getElementById('tomestone-nickname');
     const commentInput = document.getElementById('tomestone-new-comment');
     const submitBtn = document.getElementById('tomestone-submit-comment');
     const charCount = document.getElementById('tomestone-char-count');
-
-    // Save nickname on blur
-    nicknameInput.addEventListener('blur', () => {
-      if (nicknameInput.value.trim()) {
-        saveNickname(nicknameInput.value.trim());
-      }
-    });
 
     // Character count
     commentInput.addEventListener('input', () => {
@@ -304,6 +385,9 @@
         submitComment();
       }
     });
+
+    // Update UI based on login state
+    updateUsernameDisplay();
   }
 
   // Fetch and render comments
@@ -371,7 +455,7 @@
       minute: '2-digit'
     });
 
-    const isOwnComment = comment.nickname === currentNickname;
+    const isOwnComment = comment.nickname === currentUsername;
 
     el.innerHTML = `
       <div class="tomestone-comment-header">
@@ -430,18 +514,15 @@
 
   // Submit a new comment
   async function submitComment() {
-    const nicknameInput = document.getElementById('tomestone-nickname');
     const commentInput = document.getElementById('tomestone-new-comment');
     const submitBtn = document.getElementById('tomestone-submit-comment');
 
-    const nickname = nicknameInput.value.trim();
-    const content = commentInput.value.trim();
-
-    if (!nickname) {
-      showToast('Please enter a nickname', 'error');
-      nicknameInput.focus();
+    if (!currentUsername) {
+      showToast('Please sign in to Tomestone.gg and click your profile avatar', 'error');
       return;
     }
+
+    const content = commentInput.value.trim();
 
     if (!content) {
       showToast('Please enter a comment', 'error');
@@ -457,11 +538,11 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Nickname': nickname
+          'X-Nickname': currentUsername
         },
         body: JSON.stringify({
           characterId: currentCharacterId,
-          nickname,
+          nickname: currentUsername,
           content
         })
       });
@@ -471,8 +552,7 @@
         throw new Error(error.error || 'Failed to post comment');
       }
 
-      // Save nickname and clear input
-      await saveNickname(nickname);
+      // Clear input
       commentInput.value = '';
       document.getElementById('tomestone-char-count').textContent = '0/2000';
 
@@ -491,10 +571,8 @@
 
   // Submit a reply
   async function submitReply(parentId, content) {
-    const nickname = currentNickname || document.getElementById('tomestone-nickname').value.trim();
-
-    if (!nickname) {
-      showToast('Please set a nickname first', 'error');
+    if (!currentUsername) {
+      showToast('Please sign in to Tomestone.gg and click your profile avatar', 'error');
       return;
     }
 
@@ -508,12 +586,12 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Nickname': nickname
+          'X-Nickname': currentUsername
         },
         body: JSON.stringify({
           characterId: currentCharacterId,
           parentId,
-          nickname,
+          nickname: currentUsername,
           content: content.trim()
         })
       });
@@ -542,7 +620,7 @@
       const response = await fetch(`${apiBaseUrl}/api/comments/${commentId}`, {
         method: 'DELETE',
         headers: {
-          'X-Nickname': currentNickname
+          'X-Nickname': currentUsername
         }
       });
 
@@ -702,6 +780,9 @@
   // Initialize the extension
   async function init() {
     await loadSettings();
+    
+    // Set up observer to capture username from dropdown
+    setupUsernameObserver();
     
     // Set up URL change detection for SPA navigation
     setupUrlChangeDetection();

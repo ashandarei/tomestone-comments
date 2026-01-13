@@ -14,16 +14,18 @@
     </header>
 
     <main class="popup-content">
-      <div class="form-group">
-        <label for="nickname">Your Nickname</label>
-        <input type="text" id="nickname" placeholder="Enter your nickname" maxlength="50">
-        <span class="hint">Used when posting comments</span>
+      <div class="form-group user-status">
+        <label>Account Status</label>
+        <div id="user-info" class="user-info">
+          <span class="loading">Checking...</span>
+        </div>
+        <span class="hint">Your username is automatically detected from tomestone.gg</span>
       </div>
 
       <div class="form-group">
         <label for="api-url">API Server URL</label>
-        <input type="text" id="api-url" placeholder="http://localhost:3000">
-        <span class="hint">Your self-hosted comments server</span>
+        <input type="text" id="api-url" placeholder="https://tomestone-comments-production.up.railway.app">
+        <span class="hint">Leave default unless self-hosting</span>
       </div>
 
       <button id="save-btn" class="btn btn-primary">Save Settings</button>
@@ -33,7 +35,7 @@
 
     <footer class="popup-footer">
       <a href="https://tomestone.gg" target="_blank" class="link">Visit tomestone.gg</a>
-      <span class="version">v1.0.0</span>
+      <span class="version">v1.1.0</span>
     </footer>
   </div>
 

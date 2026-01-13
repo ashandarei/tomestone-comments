@@ -58,37 +58,49 @@
   margin-bottom: 20px;
 }
 
-.tomestone-nickname-input {
+/* User info section */
+.tomestone-user-info {
   margin-bottom: 12px;
 }
 
-.tomestone-nickname-input input {
-  width: 100%;
-  max-width: 250px;
+.tomestone-username-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
   background: var(--tc-bg-primary);
   border: 1px solid var(--tc-border);
   border-radius: 6px;
-  padding: 10px 12px;
+}
+
+.tomestone-posting-as {
+  font-size: 13px;
+  color: var(--tc-text-muted);
+}
+
+.tomestone-username {
   font-size: 14px;
-  color: var(--tc-text-primary);
-  transition: border-color 0.2s, box-shadow 0.2s;
+  font-weight: 600;
+  color: var(--tc-accent);
 }
 
-.tomestone-nickname-input input:focus {
-  outline: none;
-  border-color: var(--tc-accent);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+.tomestone-login-prompt {
+  padding: 12px 14px;
+  background: var(--tc-bg-primary);
+  border: 1px solid var(--tc-border);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--tc-text-secondary);
+  text-align: center;
 }
 
-.tomestone-nickname-input input::placeholder {
-  color: var(--tc-text-muted);
+.tomestone-login-prompt a {
+  color: var(--tc-accent);
+  text-decoration: underline;
 }
 
-.tomestone-nickname-hint {
-  display: block;
-  font-size: 11px;
-  color: var(--tc-text-muted);
-  margin-top: 4px;
+.tomestone-login-prompt a:hover {
+  color: var(--tc-accent-hover);
 }
 
 .tomestone-comment-input textarea {
@@ -114,6 +126,11 @@
 
 .tomestone-comment-input textarea::placeholder {
   color: var(--tc-text-muted);
+}
+
+.tomestone-comment-input textarea:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .tomestone-comment-actions {

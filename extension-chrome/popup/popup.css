@@ -97,6 +97,45 @@ body {
   margin-top: 4px;
 }
 
+/* User info section */
+.user-info {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.user-info .loading {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.user-logged-in {
+  color: var(--success);
+  font-size: 13px;
+}
+
+.user-logged-in strong {
+  color: var(--accent);
+}
+
+.user-not-logged-in {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.user-hint {
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.user-error {
+  color: var(--error);
+  font-size: 13px;
+}
+
 /* Buttons */
 .btn {
   width: 100%;

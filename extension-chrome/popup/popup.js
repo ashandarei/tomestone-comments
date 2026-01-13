@@ -1,14 +1,14 @@
 // Tomestone Comments - Popup Script (Chrome)
 
 const STORAGE_KEYS = {
-  NICKNAME: 'tomestone_comments_nickname',
+  USERNAME: 'tomestone_comments_username',
   API_URL: 'tomestone_comments_api_url'
 };
 
 const DEFAULT_API_URL = 'https://tomestone-comments-production.up.railway.app';
 
 // DOM elements
-const nicknameInput = document.getElementById('nickname');
+const userInfoEl = document.getElementById('user-info');
 const apiUrlInput = document.getElementById('api-url');
 const saveBtn = document.getElementById('save-btn');
 const statusEl = document.getElementById('status');
@@ -17,27 +17,33 @@ const statusEl = document.getElementById('status');
 async function loadSettings() {
   try {
     const result = await chrome.storage.local.get([
-      STORAGE_KEYS.NICKNAME,
+      STORAGE_KEYS.USERNAME,
       STORAGE_KEYS.API_URL
     ]);
 
-    nicknameInput.value = result[STORAGE_KEYS.NICKNAME] || '';
+    // Display username status
+    const username = result[STORAGE_KEYS.USERNAME];
+    if (username) {
+      userInfoEl.innerHTML = `
+        <span class="user-logged-in">✓ Posting as: <strong>${escapeHtml(username)}</strong></span>
+      `;
+    } else {
+      userInfoEl.innerHTML = `
+        <span class="user-not-logged-in">⚠ Not detected yet</span>
+        <p class="user-hint">Visit tomestone.gg while logged in and click your profile avatar to detect your username.</p>
+      `;
+    }
+
     apiUrlInput.value = result[STORAGE_KEYS.API_URL] || DEFAULT_API_URL;
   } catch (e) {
     console.error('Failed to load settings:', e);
+    userInfoEl.innerHTML = '<span class="user-error">Failed to load</span>';
   }
 }
 
 // Save settings
 async function saveSettings() {
-  const nickname = nicknameInput.value.trim();
   const apiUrl = apiUrlInput.value.trim() || DEFAULT_API_URL;
-
-  // Validate nickname
-  if (nickname && nickname.length > 50) {
-    showStatus('Nickname must be 50 characters or less', 'error');
-    return;
-  }
 
   // Validate API URL
   try {
@@ -52,7 +58,6 @@ async function saveSettings() {
 
   try {
     await chrome.storage.local.set({
-      [STORAGE_KEYS.NICKNAME]: nickname,
       [STORAGE_KEYS.API_URL]: apiUrl
     });
 
@@ -72,15 +77,10 @@ async function saveSettings() {
 // Test API connection
 async function testApiConnection(apiUrl) {
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
-    
     const response = await fetch(`${apiUrl}/api/health`, {
       method: 'GET',
-      signal: controller.signal
+      signal: AbortSignal.timeout(5000)
     });
-    
-    clearTimeout(timeoutId);
 
     if (response.ok) {
       showStatus('Settings saved! API connection successful.', 'success');
@@ -103,13 +103,15 @@ function showStatus(message, type) {
   }, 5000);
 }
 
+// Escape HTML to prevent XSS
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 // Event listeners
 saveBtn.addEventListener('click', saveSettings);
-
-// Save on Enter key
-nicknameInput.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') saveSettings();
-});
 
 apiUrlInput.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') saveSettings();
