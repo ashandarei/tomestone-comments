@@ -37,7 +37,8 @@
     "gecko": {
       "id": "comments@tomestone.gg",
       "data_collection_permissions": {
-        "required": []
+        "required": ["none"],
+        "optional": ["technicalAndInteraction"]
       }
     }
   }
